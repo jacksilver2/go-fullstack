@@ -2,8 +2,7 @@ console.log('firing up app');
 const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
-
-const Thing = require('./models/thing');
+const stuffRoutes = require('./routes/stuff');
 
 const app = express();
 //connection
@@ -28,46 +27,6 @@ app.use((req, res, next) => {
 
 app.use(bodyParser.json());
 
-//post route
-app.post('/api/stuff', (req, res, next) => {
-    const thing = new Thing({
-        title: req.body.title,
-        description: req.body.description,
-        imageUrl: req.body.imageUrl,
-        price: req.body.price,
-        userId: req.body.userId,
-    });
-    thing.save().then(
-        () => {
-            res.status(201).json({
-                message: 'post sent successfully'
-            })
-        }
-    ).catch(
-        (error) => {
-            res.status(400).json({
-                error: error
-            });
-        }
-    );
-});
-
-//get all things
-app.use('/api/stuff', (req, res, next) => {
-    console.log('entering get route');
-    Thing.find().then(
-        (things) => {
-            res.status(200).json(things)
-            console.log('got promise')
-        }
-    ).catch(
-        (error) => {
-            res.status(400).json({
-                error: error
-            });
-        }
-    );
-});
-
+app.use('/api/stuff', stuffRoutes)
 
 module.exports = app;
